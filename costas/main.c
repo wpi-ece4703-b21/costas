@@ -34,8 +34,11 @@ float32_t filter(float32_t input) {
     static unsigned carrier = 0;
     carrier = (carrier + 1) & 3; // carrier = fs/4
 
-    itaps[0] = input * arm_cos_f32(carrier * M_PI /2.0 + phi);
-    qtaps[0] = input * arm_sin_f32(carrier * M_PI /2.0 + phi);
+    float32_t carriercos = arm_cos_f32(-1.0 * carrier * M_PI /2.0 - phi);
+    float32_t carriersin = arm_sin_f32(-1.0 * carrier * M_PI /2.0 - phi);
+
+    itaps[0] = input * carriercos;
+    qtaps[0] = input * carriersin;
 
     for (i = 0; i< NUMCOEF; i++) {
         qresult += qtaps[i] * coef[i];
@@ -48,13 +51,13 @@ float32_t filter(float32_t input) {
     }
 
     float32_t error = qresult * iresult;
-    phi = phi + 0.1 * error;
+    phi = phi + 0.05 * error;
 
     if (xlaudio_pushButtonRightDown())
         return error;
 
     if (xlaudio_pushButtonLeftDown())
-        return input;
+        return qresult;
 
     return iresult;
 }

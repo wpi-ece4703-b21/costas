@@ -97,12 +97,22 @@ void initClock() {
     FlashCtl_setWaitState  (FLASH_BANK0, 2);
     FlashCtl_setWaitState  (FLASH_BANK1, 2);
 
-    CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_48);
-    CS_initClockSignal(CS_MCLK,   CS_DCOCLK_SELECT,   CS_CLOCK_DIVIDER_1);
-    CS_initClockSignal(CS_ACLK,   CS_REFOCLK_SELECT,  CS_CLOCK_DIVIDER_1);
-    CS_initClockSignal(CS_HSMCLK, CS_DCOCLK_SELECT,   CS_CLOCK_DIVIDER_1);
-    CS_initClockSignal(CS_SMCLK,  CS_DCOCLK_SELECT,   CS_CLOCK_DIVIDER_1);
-    CS_initClockSignal(CS_BCLK,   CS_REFOCLK_SELECT,  CS_CLOCK_DIVIDER_1);
+    // use the external crystal
+    GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_PJ,
+                GPIO_PIN3 | GPIO_PIN2, GPIO_PRIMARY_MODULE_FUNCTION);
+    CS_setExternalClockSourceFrequency(32000,48000000);
+    CS_startHFXT(false);
+
+    CS_initClockSignal(CS_MCLK,   CS_HFXTCLK_SELECT,   CS_CLOCK_DIVIDER_1);
+    CS_initClockSignal(CS_HSMCLK, CS_HFXTCLK_SELECT,   CS_CLOCK_DIVIDER_1);
+    CS_initClockSignal(CS_SMCLK,  CS_HFXTCLK_SELECT,   CS_CLOCK_DIVIDER_1);
+
+//    CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_48);
+//    CS_initClockSignal(CS_MCLK,   CS_DCOCLK_SELECT,   CS_CLOCK_DIVIDER_1);
+//    CS_initClockSignal(CS_ACLK,   CS_REFOCLK_SELECT,  CS_CLOCK_DIVIDER_1);
+//    CS_initClockSignal(CS_HSMCLK, CS_DCOCLK_SELECT,   CS_CLOCK_DIVIDER_1);
+//    CS_initClockSignal(CS_SMCLK,  CS_DCOCLK_SELECT,   CS_CLOCK_DIVIDER_1);
+//    CS_initClockSignal(CS_BCLK,   CS_REFOCLK_SELECT,  CS_CLOCK_DIVIDER_1);
 }
 
 void debugpininit() {

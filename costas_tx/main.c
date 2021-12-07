@@ -133,6 +133,7 @@ uint16_t processSample(uint16_t x) {
     static int filterphase = 0;
     float32_t result = rrcphase(filterphase, filterphase ? 1 : bpsksymbolgenerator());
     filterphase = (filterphase + 1) % UPSAMPLE;
+
     return xlaudio_f32_to_dac14(result * 0.1);
 }
 
